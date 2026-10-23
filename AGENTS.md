@@ -28,10 +28,26 @@ The two credential files are gitignored and are generated at container start by
 | `firebase-applet-config.json` | `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_APP_ID`, optional `FIREBASE_FIRESTORE_DATABASE_ID` | Frontend SDK; `src/firebase.ts` imports it statically, so it must exist or Vite fails to serve the app |
 | `firebase-admin-sdk.json` (`FIREBASE_ADMIN_SDK_PATH`) | `FIREBASE_ADMIN_SDK_JSON` (whole service-account JSON) | Backend admin/service API routes and admin custom-claim checks |
 
-Placeholders in `.env.base44-defaults` let the app boot without credentials; the app is
-listed *after* none and `/run/base44/app.env` (platform secrets) is loaded last, so real
-values always win. A missing admin key only logs "Firebase Admin SDK initialization
-failed" — the server still starts.
+Placeholders in `.env.base44-defaults` let the app boot without credentials; `/run/base44/app.env`
+(platform secrets) is loaded after it, so real values always win. A missing admin key only
+logs "Firebase Admin SDK initialization failed" — the server still starts.
+
+`FIREBASE_ADMIN_SDK_JSON` arrives through an env file, where the outer `{}` of a
+JSON-looking value get stripped; the script re-wraps before parsing, so either form works.
+
+### Firebase project requirements (outside this repo)
+
+Valid credentials are not enough — the Firebase project itself must have:
+
+- **Cloud Firestore API enabled** and a database created. Otherwise every admin SDK read
+  fails `code: 7 PERMISSION_DENIED / Cloud Firestore API has not been used in project`,
+  surfacing as `500 {"error":"Failed to fetch wines"}` and a spinning wine list.
+- **Firebase Authentication enabled with the Google provider**, and the preview origin
+  (`3000-<preview host suffix>`) added under Authentication > Settings > Authorized
+  domains, or Google sign-in popups are rejected. With no auth setup at all, admin SDK
+  calls fail with `auth/configuration-not-found`.
+- Firestore rules deployed (`firebase deploy --only firestore:rules`) and collections
+  (`menu_items`, `wines`, `orders`, …) seeded — empty collections just render empty.
 
 Without real Firebase values the UI renders (landing page, concierge shell) but menu
 items, sign-in and orders come back empty. Without `GROQ_API_KEY` the concierge requests
