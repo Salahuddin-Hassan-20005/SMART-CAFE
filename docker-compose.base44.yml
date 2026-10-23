@@ -1,0 +1,43 @@
+services:
+  app:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    restart: on-failure
+    labels:
+      base44.project: "Smart Cafe"
+      base44.kind: web
+      base44.port: "3000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - app_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      # Sandbox only: passed through so Vite accepts the preview proxy's hosts.
+      - BASE44_PREVIEW_MODE
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+      # Filled in by scripts/base44-write-firebase-config.mjs when credentials exist.
+      - FIREBASE_ADMIN_SDK_PATH=/tmp/base44/firebase-admin-sdk.json
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    command:
+      - sh
+      - -ec
+      - |
+        npm ci --no-audit --no-fund
+        node scripts/base44-write-firebase-config.mjs
+        exec npm run dev
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e 'fetch("http://127.0.0.1:3000/").then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))'
+      interval: 15s
+      timeout: 5s
+      start_period: 120s
+      retries: 5
+
+volumes:
+  app_node_modules:

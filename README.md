@@ -11,6 +11,16 @@ A curated, AI-powered digital concierge experience for a high-end bistro. A CAFE
 - **Admin Dashboard**: Manage menu items, orders, and staff
 - **Wine Concierge**: Sophisticated wine recommendations with responsible serving limits
 
+## Run with Docker (dev sandbox)
+
+```bash
+docker compose -f docker-compose.base44.yml up -d
+```
+
+Then open `http://localhost:3000`. Firebase config and the Groq key come from environment
+variables (see `AGENTS.md`); `.env.base44-defaults` holds placeholders so the app boots
+without credentials, and values loaded from `/run/base44/app.env` override them.
+
 ## Run Locally
 
 **Prerequisites:** Node.js
