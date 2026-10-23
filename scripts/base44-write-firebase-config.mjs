@@ -30,11 +30,24 @@ console.log(`[base44] wrote ${path.basename(configPath)}`);
 
 const adminSdk = process.env.FIREBASE_ADMIN_SDK_JSON?.trim();
 if (adminSdk) {
+  // The service account JSON travels through an env file, where the outer braces
+  // of a JSON-looking value can be stripped. Re-wrap, then re-serialize so the
+  // file on disk is always canonical (and the private key keeps its \n escapes).
+  const serviceAccount = JSON.parse(
+    adminSdk.startsWith("{") ? adminSdk : `{${adminSdk}}`,
+  );
+  if (!serviceAccount.private_key || !serviceAccount.client_email) {
+    throw new Error(
+      "FIREBASE_ADMIN_SDK_JSON is not a Firebase service account key (missing private_key/client_email).",
+    );
+  }
   const target =
     process.env.FIREBASE_ADMIN_SDK_PATH ||
     path.join(root, "firebase-admin-sdk.json");
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, `${adminSdk}\n`, { mode: 0o600 });
+  fs.writeFileSync(target, `${JSON.stringify(serviceAccount)}\n`, {
+    mode: 0o600,
+  });
   console.log(`[base44] wrote Firebase admin credentials to ${target}`);
 } else {
   console.warn(
