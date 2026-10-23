@@ -1,0 +1,52 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "FIREBASE_API_KEY",
+      "description": "Firebase web app config: apiKey (Firebase console > Project settings > Your apps > Web app). Also accepted via Firebase config env upload.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_AUTH_DOMAIN",
+      "description": "Firebase web app config: authDomain (e.g. <project>.firebaseapp.com).",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_PROJECT_ID",
+      "description": "Firebase project id.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_STORAGE_BUCKET",
+      "description": "Firebase web app config: storageBucket.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_MESSAGING_SENDER_ID",
+      "description": "Firebase web app config: messagingSenderId.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_APP_ID",
+      "description": "Firebase web app config: appId.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_FIRESTORE_DATABASE_ID",
+      "description": "Optional: named Firestore database id. Leave empty to use (default).",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "FIREBASE_ADMIN_SDK_JSON",
+      "description": "Full contents of a Firebase service account key JSON (Firebase console > Project settings > Service accounts > Generate new private key). Enables the admin/service API routes and admin custom claims.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "GROQ_API_KEY",
+      "description": "Groq API key for the AI concierge (console.groq.com/keys).",
+      "requiredAtBoot": false
+    }
+  ]
+}
