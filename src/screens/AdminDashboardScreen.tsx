@@ -42,7 +42,7 @@ export function AdminDashboardScreen() {
         id: doc.id,
         ...doc.data()
       })) as MenuItem[];
-      setMenuItems(fetchedItems);
+      setItems(fetchedItems);
     });
 
     return () => unsubscribe();

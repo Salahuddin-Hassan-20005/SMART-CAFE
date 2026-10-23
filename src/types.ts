@@ -24,6 +24,20 @@ export interface MenuItem {
   badge?: string;
 }
 
+/** Shape of a wine document returned by GET /api/wines. */
+export interface WineItem {
+  id: string;
+  name: string;
+  type?: string;
+  region?: string;
+  vintage?: string;
+  price_bottle?: number;
+  price_glass?: number;
+  stock_status?: string;
+  tasting_notes?: string;
+  image_url?: string;
+}
+
 export interface CartItem extends MenuItem {
   cartId: string;
   quantity: number;

@@ -26,7 +26,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (isFlatArray) {
       // Handle flat array schema: [{ name, extra_price }]
       Object.entries(selectedOptions).forEach(([optionId, isSelected]) => {
-        if (isSelected === true || isSelected === 'true') {
+        if (String(isSelected) === 'true') {
           const customization = item.customizations?.find((c: any) => {
             const idx = parseInt(optionId.replace('custom_', ''));
             return item.customizations?.[idx] === c;

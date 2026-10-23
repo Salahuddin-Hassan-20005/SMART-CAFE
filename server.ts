@@ -55,7 +55,7 @@ async function verifyAdminToken(req: any, res: any, next: any) {
       ),
     ]);
 
-    if (decodedToken.admin !== true) {
+    if ((decodedToken as any).admin !== true) {
       return res.status(403).json({ error: "Admin privileges required" });
     }
 

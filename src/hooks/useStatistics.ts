@@ -234,7 +234,8 @@ export const useStatistics = (
 
     const categoryMap = new Map<string, { count: number; revenue: number }>();
 
-    Object.entries(statistics.itemSalesCount).forEach(([itemId, data]) => {
+    Object.entries(statistics.itemSalesCount).forEach(([itemId, raw]) => {
+      const data = raw as { count?: number; revenue?: number };
       // Find category from bestSellers
       const bestSeller = statistics.bestSellers.find((bs) => bs.id === itemId);
       const category = bestSeller?.category || "Unknown";

@@ -63,3 +63,19 @@ docker compose -f docker-compose.base44.yml logs --tail=50 app
 
 The served HTML must contain `/@vite/client` and `/src/main.tsx` — that proves it is the
 dev server from the bind-mounted source, not a prebuilt bundle.
+
+## Build and checks
+
+```bash
+docker compose -f docker-compose.base44.yml exec -T app npx tsc --noEmit   # npm run lint
+docker compose -f docker-compose.base44.yml exec -T app npm run build      # vite build -> dist/
+```
+
+`functions/` is a separate npm package (own `tsconfig.json` and dependencies) and is
+excluded from the root typecheck; install and build it from `functions/` instead.
+
+Vite's proxy sends unmatched `/api/*` URLs back to this same server (port 3000), so a
+route that does not exist in `server.ts` loops and fails with
+`EADDRNOTAVAIL 127.0.0.1:3000` instead of a clean 404. The existing API surface is in
+`server.ts` — note there is no `GET /api/menu` (menu is read through
+`/api/customer/ritual`, writes are `POST/PATCH/DELETE /api/menu`).
